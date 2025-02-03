@@ -1,0 +1,9 @@
+services:
+  link_domains:
+    build: .
+    network_mode: host
+    environment:
+      CLOUDFLARE_API_KEY: "${CLOUDFLARE_API_KEY}"
+      CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}"
+      SUBDOMAINS: "${SUBDOMAINS}"
+    command: ['one-time']

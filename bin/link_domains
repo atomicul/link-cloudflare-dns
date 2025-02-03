@@ -1,0 +1,113 @@
+#!/bin/bash
+
+main() {
+    ensure_variable "$SUBDOMAINS" 'SUBDOMAINS'
+
+    url=https://api.cloudflare.com/client/v4
+    sub_domains=("$SUBDOMAINS")
+
+    zones_response=$(curl $url/zones)
+    if [ -z "$zones_response" ]; then exit 1; fi
+
+    domain="$(json '.result[0].name' <<< $zones_response | grep -o '[^"]*')"
+    zone_id="$(json '.result[0].id' <<< $zones_response | grep -o '[^"]*')"
+
+    records_response=$(curl $url/zones/${zone_id}/dns_records)
+    if [ -z "$records_response" ]; then exit 1; fi
+
+    for type in A AAAA
+    do
+        if [ "$type" = 'A' ]; then
+            ip=$(curl -4 icanhazip.com)
+        else
+            ip=$(curl -6 icanhazip.com)
+        fi
+
+        for sub_domain in ${sub_domains[@]}
+        do
+            
+            if [ "$sub_domain" = '@' ]; then
+                fqdn="$domain"
+            else
+                fqdn="$sub_domain.$domain"
+            fi
+
+            read -r -d '' record <<EOF
+                {
+                    "type": "$type",
+                    "name": "$sub_domain",
+                    "content": "$ip",
+                    "proxied": false,
+                    "comment": "generated automatically"
+                }
+EOF
+
+            record_body=$(
+                json '.result' <<< "$records_response" | \
+                json "filter(.type == \"$type\")" | \
+                json "filter(.name == \"${fqdn}\")"
+            )
+            record_id=$(json ".[0].id" <<< "$record_body" | grep -o '[^"]*')
+            record_ip=$(json ".[0].content" <<< "$record_body" | grep -o '[^"]*')
+
+            if [ "$record_id" = 'null' ]
+            then
+                log "* Creating ${fqdn} of type $type with the address $ip"
+                curl -d "$record" "$url/zones/${zone_id}/dns_records" >/dev/null
+                printf "\n"
+            elif [ "$record_ip" = "$ip" ]
+            then
+                log "* ${fqdn} of type $type is up to date"
+            else
+                log "* Updating ${fqdn} of type $type with the address $ip"
+                curl -X PUT -d "$record" "$url/zones/${zone_id}/dns_records/$record_id" >/dev/null
+                printf "\n"
+            fi
+        done
+    done
+}
+
+json () {
+    yq -p json -o json "$@"
+}
+
+log () {
+    if [ $# -eq 0 ]; then
+        printf "[$(date)] "
+        cat /dev/stdin
+        echo
+    else
+        echo "[$(date)]" "${@}"
+    fi
+}
+
+curl () {
+    ensure_variable "$CLOUDFLARE_EMAIL" 'CLOUDFLARE_EMAIL'
+    ensure_variable "$CLOUDFLARE_API_KEY" 'CLOUDFLARE_API_KEY'
+
+    output_file='/tmp/curl-output'
+
+    status_code=$(
+        $(which curl) -s \
+            -w '%{http_code}' \
+            -o "$output_file" \
+            -H "X-Auth-Email: $CLOUDFLARE_EMAIL" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_KEY" \
+            "$@"
+        )
+
+    [ "$status_code" -ge 200 ] && [ "$status_code" -lt 300 ] \
+        && cat "$output_file" \
+        || cat "$output_file" | >&2  log
+}
+
+ensure_variable () {
+    if [ -z "$1" ]
+    then
+        >&2 printf 'Missing required environment variable: %s\n' "$2"
+        exit 1
+    fi
+    return 0
+}
+
+main ${@}

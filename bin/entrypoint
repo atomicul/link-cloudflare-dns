@@ -1,0 +1,39 @@
+#!/bin/bash
+
+main () {
+    mkdir -p /var/log/update_dns
+
+    if [[ $# -eq 0 ]]
+    then
+        print_usage
+    fi
+
+    if [ "$1" == 'one-time' ]
+    then
+        run_one_time
+    fi
+
+    if [ "$1" == 'service' ]
+    then
+        run_as_service "$2"
+    fi
+
+    print_usage
+}
+
+run_as_service () {
+    loop "$1" link_domains 1>>/var/log/update-dns/access.log 2>>/var/log/update-dns/error.log
+    exit $?
+}
+
+run_one_time () {
+    link_domains
+    exit $?
+}
+
+print_usage () {
+    >&2 echo "USAGE: $0 { one-time | service } [ARGS...]"
+    exit 1
+}
+
+main "${@}"

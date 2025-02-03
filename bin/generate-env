@@ -1,0 +1,127 @@
+#!/bin/bash
+
+main() {
+    clear >/dev/tty
+    echo -e "Input your $(color_sequence 'Cloudflare email address')" >/dev/tty
+    echo -e "You can find it here: $(color_url https://dash.cloudflare.com/profile)" >/dev/tty
+    echo >/dev/tty
+    printf 'CLOUDFLARE_EMAIL=%s\n' "$(read_word 'Email')"
+
+    clear >/dev/tty
+    echo -e "Input your $(color_sequence 'Cloudflare API Token')" >/dev/tty
+    echo >/dev/tty
+    fmt -w "$(tput cols)" <<<\
+'Make sure it has read/write DNS permission for the domain
+you want to manage and only that domain. In the case it has 
+permission to access multiple, it will use one at random.' >/dev/tty
+    echo >/dev/tty
+    echo -e "You can make the token here: $(color_url https://dash.cloudflare.com/profile/api-tokens)" >/dev/tty
+    echo >/dev/tty
+    printf 'CLOUDFLARE_API_KEY=%s\n' "$(read_word 'Cloudflare API Token')"
+
+    clear >/dev/tty
+    echo -e "Input all the $(color_sequence 'subdomains') you want to forward" >/dev/tty
+    echo >/dev/tty
+    fmt -w "$(tput cols)" <<<\
+'Type all the subdomains you want to forward separated by
+whitespace. Use "@" for root. For example, inputting "@ 
+subdomain a.b" and having the domain "example.com", the
+following will be forwarded to this host: example.com 
+subdomain.example.com a.b.example.com.' >/dev/tty
+    echo >/dev/tty
+    printf 'SUBDOMAINS="%s"\n' "$(MANY=1 DEFAULT='@' read_word 'subdomains')"
+
+    clear >/dev/tty
+    echo -e "Choose $(color_sequence 'how to run') the job" >/dev/tty
+    echo >/dev/tty
+    as_service="$(pick_variant 'Run once' 'Run as a service (on a timer)')"
+    printf 'SERVICE="%s"\n' "$as_service"
+
+    if [ "$as_service" -eq 0 ]; then
+        return 0
+    fi
+
+    clear >/dev/tty
+    echo -e "Choose $(color_sequence 'how often') this job runs" >/dev/tty
+    echo >/dev/tty
+    echo 'Input an integer followed by one of [smhd] (seconds, minutes, hours, days)' >/dev/tty
+    echo >/dev/tty
+    printf 'LOOP_TIME=%s\n' "$(DEFAULT='60s' read_word 'time')"
+
+    clear >/dev/tty
+    echo -e "Input a directory to store $(color_sequence 'log files')" >/dev/tty
+    echo >/dev/tty
+    printf 'LOGS_DIRECTORY=%s\n' "$(DEFAULT='/var/log/update-dns' read_word 'directory')"
+}
+
+read_word () {
+    export MANY
+    export DEFAULT
+
+    if [ -z "$DEFAULT" ]; then
+        printf "$(bold_sequence '%s> ')" "$1" >/dev/tty
+    else
+        printf "$(bold_sequence '%s (default: %s)> ')" "$1" "$DEFAULT" >/dev/tty
+    fi
+    
+
+    if [ "$MANY" = 1 ]; then
+        read -r
+        input="$(xargs <<<"$REPLY")"
+    else
+        read -r input _
+    fi
+
+
+    if [ -z "$input" ]; then
+        if [ -z "$DEFAULT" ]; then
+            read_word "$@"
+            return $?
+        else
+            printf '%s' "$DEFAULT"
+        fi
+    else
+        printf '%s' "$input"
+    fi
+
+}
+
+pick_variant () {
+    args=("$@")
+    for i in "${!args[@]}"
+    do
+        printf '%i) %s\n' $i "${args[$i]}" >/dev/tty
+    done
+
+    printf "$(bold_sequence '%s> ')" "Pick one [0..$(($#-1))] (default: 0)" >/dev/tty
+    read -r
+
+    if [ -z "$REPLY" ]; then
+        printf '0'
+        return
+    fi
+    if ! [[ "$REPLY" =~ ^(0|[1-9][0-9]*)$ ]]; then 
+        pick_variant "$@"
+        return
+    fi
+    if (( "$REPLY" >= "$#" )); then 
+        pick_variant "$@"
+        return
+    fi
+
+    printf '%i' "$REPLY"
+}
+
+bold_sequence () {
+    printf '\e[1m%s\e[0m ' "$1"
+}
+
+color_sequence () {
+    printf '\e[32m%s\e[0m' "$1"
+}
+
+color_url () {
+    printf '\e[1;34m%s\e[0m' "$1"
+}
+
+main "$@"

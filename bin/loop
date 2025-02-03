@@ -1,0 +1,30 @@
+#!/bin/bash
+
+main () {
+    [ $# -lt 2 ] && show_usage
+
+    [[ "$1" =~ ^(0|[1-9][0-9]*)[smhd]?$ ]] || show_usage
+
+    args=( "$@" )
+
+    while true; do
+        "${args[@]:1}"
+        sleep $1
+    done
+}
+
+show_usage () {
+    cat <<EOF
+Usage: loop PAUSE_DURATION COMMAND [ARGS]...
+Runs COMMAND periodically, once every PAUSE_DURATION.
+
+PAUSE_DURATION accepts a number with a suffix. The suffix
+may be 's' for seconds (the default), 'm' for minutes,
+'h' for hours or 'd' for days. The number must be an
+integer.
+EOF
+
+    exit 1
+}
+
+main "${@}"

@@ -1,0 +1,12 @@
+services:
+  link_domains:
+    build: .
+    network_mode: host
+    restart: always
+    environment:
+      CLOUDFLARE_API_KEY: "${CLOUDFLARE_API_KEY}"
+      CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}"
+      SUBDOMAINS: "${SUBDOMAINS}"
+    volumes:
+      - "${LOGS_DIRECTORY}:/var/log/update-dns"
+    command: ['service', '${LOOP_TIME}']
