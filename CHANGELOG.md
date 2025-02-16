@@ -7,3 +7,6 @@ This initial release includes:
 
 # v0.1.1
 * Add initial README
+
+# v0.1.2
+* Fix Docker workflow
