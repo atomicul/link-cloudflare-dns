@@ -4,3 +4,6 @@ This initial release includes:
     - Two docker compose files for running once/as a service
     - Script to generate env config variables for compose files
     - Github workflow to publish docker containers
+
+# v0.1.1
+* Add initial README
