@@ -37,8 +37,9 @@ jobs:
       - name: Download source code
         id: get_pages_path
         run: >
-          wget -O source.tar.gz '${{ steps.release_data.outputs.tarball_url }}' && \
-            tar -xvf source.tar.gz && cd "$(tar -tf source.tar.gz | head -n +1)"
+          curl -Ls -o- 'https://api.github.com/repos/atomicul/link-cloudflare-dns/tarball/v0.2.0' \
+              | tar -xvz > extracted.txt \
+              && cd "$(head -n +1 extracted.txt)" \
           GITHUB_OUTPUT+="pages_path=$(pwd)/bin"
 
       - name: Setup Pages

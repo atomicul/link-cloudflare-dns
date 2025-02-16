@@ -13,3 +13,6 @@ This initial release includes:
 
 # v0.2.0
 * Add workflow for publishing scripts to github pages
+
+# v0.2.1
+* Fix github pages workflow
