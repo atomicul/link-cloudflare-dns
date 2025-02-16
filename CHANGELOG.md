@@ -19,3 +19,6 @@ This initial release includes:
 
 # v0.2.2
 * Fix github pages warkflow (fr this time)
+
+# v0.3.0
+* Add install script

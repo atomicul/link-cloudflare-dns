@@ -1,0 +1,109 @@
+#!/bin/bash
+
+GITHUB_PAGES_ROOT='https://atomicul.github.io/link-cloudflare-dns'
+DOCKER_IMAGE='ghcr.io/atomicul/link-cloudflare-dns:latest'
+CONTAINER_NAME='link-cloudflare-dns'
+
+main () {
+    clear
+    echo -ne "$(cat <<'EOF'
+
+\e[32m
+ /$$       /$$           /$$      
+| $$      |__/          | $$      
+| $$       /$$ /$$$$$$$ | $$   /$$
+| $$      | $$| $$__  $$| $$  /$$/
+| $$      | $$| $$  \ $$| $$$$$$/ 
+| $$      | $$| $$  | $$| $$_  $$ 
+| $$$$$$$$| $$| $$  | $$| $$ \  $$
+|________/|__/|__/  |__/|__/  \__/
+
+  /$$$$$$  /$$                           /$$  /$$$$$$  /$$                               
+ /$$__  $$| $$                          | $$ /$$__  $$| $$                               
+| $$  \__/| $$  /$$$$$$  /$$   /$$  /$$$$$$$| $$  \__/| $$  /$$$$$$   /$$$$$$   /$$$$$$  
+| $$      | $$ /$$__  $$| $$  | $$ /$$__  $$| $$$$    | $$ |____  $$ /$$__  $$ /$$__  $$ 
+| $$      | $$| $$  \ $$| $$  | $$| $$  | $$| $$_/    | $$  /$$$$$$$| $$  \__/| $$$$$$$$ 
+| $$    $$| $$| $$  | $$| $$  | $$| $$  | $$| $$      | $$ /$$__  $$| $$      | $$_____/ 
+|  $$$$$$/| $$|  $$$$$$/|  $$$$$$/|  $$$$$$$| $$      | $$|  $$$$$$$| $$      |  $$$$$$$ 
+ \______/ |__/ \______/  \______/  \_______/|__/      |__/ \_______/|__/       \_______/ 
+
+ /$$$$$$$  /$$   /$$  /$$$$$$ 
+| $$__  $$| $$$ | $$ /$$__  $$
+| $$  \ $$| $$$$| $$| $$  \__/
+| $$  | $$| $$ $$ $$|  $$$$$$ 
+| $$  | $$| $$  $$$$ \____  $$
+| $$  | $$| $$\  $$$ /$$  \ $$
+| $$$$$$$/| $$ \  $$|  $$$$$$/
+|_______/ |__/  \__/ \______/ 
+\e[0m
+EOF
+)"
+    printf '\n\n'
+    echo -e '\e[1mDynamic DNS Docker service to keep your domain name in sync with your IP address\e[0m'
+    echo
+    printf 'Press any key to proceed to installation...'
+    read -r
+    echo
+
+    if docker container ls --all --format '{{ .Names }}' \
+        | grep -P "\s*${CONTAINER_NAME}\s*"
+    then
+        if ! yes_or_no "There is already an exsting container named $CONTAINER_NAME. Overwrite?"
+        then
+            echo "Aborting..."
+            return 0
+        fi
+
+        echo "Stopping and removing container. This might take a little while..."
+
+        docker container stop "$CONTAINER_NAME"
+        docker container remove "$CONTAINER_NAME"
+    fi
+
+    set -a
+    source <(run_script 'generate-env')
+    set +a
+
+    if [ "$SERVICE" = 0 ]; then
+        docker run \
+            --name link-cloudflare-dns \
+            --rm \
+            --attach STDOUT \
+            --attach STDERR \
+            --network=host \
+            -e CLOUDFLARE_API_KEY \
+            -e CLOUDFLARE_EMAIL \
+            -e SUBDOMAINS \
+            "$DOCKER_IMAGE" one-time
+    else
+        docker run \
+            --name link-cloudflare-dns \
+            --detach \
+            --restart=unless-stopped \
+            --network=host \
+            -e CLOUDFLARE_API_KEY \
+            -e CLOUDFLARE_EMAIL \
+            -e SUBDOMAINS \
+            -v "${LOGS_DIRECTORY}:/var/log/update-dns" \
+            "$DOCKER_IMAGE" service "$LOOP_TIME"
+    fi
+
+
+}
+
+run_script () {
+    args=("$@")
+    bash <(curl -Ls -o- "$GITHUB_PAGES_ROOT/$1") "${args[@]:1}"
+}
+
+yes_or_no () {
+    while true; do
+        printf '\e[1m%s [y/N] \e[0m' "$1"
+        read -r
+        if [ -z $REPLY ]; then return 1; fi
+        if [[ "$REPLY" == [Yy]* ]]; then return 0; fi
+        if [[ "$REPLY" == [Nn]* ]]; then return 1; fi
+    done
+}
+
+main "$@"
