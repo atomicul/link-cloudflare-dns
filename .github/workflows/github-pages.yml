@@ -1,0 +1,53 @@
+name: Github Pages
+
+on:
+  repository_dispatch:
+    types: [release]
+
+env:
+  TAG: ${{ github.event.client_payload.tag }}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup workspace path
+        uses: mickem/clean-after-action@v1
+
+      - name: Get Release data
+        id: release_data
+        uses: KevinRohn/github-full-release-data@v2
+        with:
+          version: ${{ env.TAG }}
+
+      - name: Download source code
+        id: get_pages_path
+        run: >
+          wget -O source.tar.gz '${{ steps.release_data.outputs.tarball_url }}' && \
+            tar -xvf source.tar.gz && cd "$(tar -tf source.tar.gz | head -n +1)"
+          GITHUB_OUTPUT+="pages_path=$(pwd)/bin"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '${{ steps.get_pages_path.outputs.pages_path }}'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
