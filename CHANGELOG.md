@@ -10,3 +10,6 @@ This initial release includes:
 
 # v0.1.2
 * Fix Docker workflow
+
+# v0.2.0
+* Add workflow for publishing scripts to github pages
