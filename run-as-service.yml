@@ -8,5 +8,5 @@ services:
       CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}"
       SUBDOMAINS: "${SUBDOMAINS}"
     volumes:
-      - "${LOGS_DIRECTORY}:/var/log/update-dns"
+      - "${LOGS_DIRECTORY}:/var/log/link-cloudflare-dns"
     command: ['service', '${LOOP_TIME}']

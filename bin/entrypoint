@@ -1,7 +1,7 @@
 #!/bin/bash
 
 main () {
-    mkdir -p /var/log/update_dns
+    mkdir -p /var/log/link-cloudflare-dns
 
     if [[ $# -eq 0 ]]
     then
@@ -22,7 +22,7 @@ main () {
 }
 
 run_as_service () {
-    loop "$1" link_domains 1>>/var/log/update-dns/access.log 2>>/var/log/update-dns/error.log
+    loop "$1" link_domains 1>>/var/log/link-cloudflare-dns/access.log 2>>/var/log/link-cloudflare-dns/error.log
     exit $?
 }
 

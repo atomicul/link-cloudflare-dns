@@ -22,3 +22,6 @@ This initial release includes:
 
 # v0.3.0
 * Add install script
+
+# v0.4.0
+* Rename log directory to match the new name of the repo

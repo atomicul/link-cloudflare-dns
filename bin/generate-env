@@ -51,7 +51,7 @@ subdomain.example.com a.b.example.com.' >/dev/tty
     clear >/dev/tty
     echo -e "Input a directory to store $(color_sequence 'log files')" >/dev/tty
     echo >/dev/tty
-    printf 'LOGS_DIRECTORY=%s\n' "$(DEFAULT='/var/log/update-dns' read_word 'directory')"
+    printf 'LOGS_DIRECTORY=%s\n' "$(DEFAULT='/var/log/link-cloudflare-dns' read_word 'directory')"
 }
 
 read_word () {

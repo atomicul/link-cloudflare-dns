@@ -84,7 +84,7 @@ EOF
             -e CLOUDFLARE_API_KEY \
             -e CLOUDFLARE_EMAIL \
             -e SUBDOMAINS \
-            -v "${LOGS_DIRECTORY}:/var/log/update-dns" \
+            -v "${LOGS_DIRECTORY}:/var/log/link-cloudflare-dns" \
             "$DOCKER_IMAGE" service "$LOOP_TIME"
     fi
 
