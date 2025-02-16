@@ -16,3 +16,6 @@ This initial release includes:
 
 # v0.2.1
 * Fix github pages workflow
+
+# v0.2.2
+* Fix github pages warkflow (fr this time)
