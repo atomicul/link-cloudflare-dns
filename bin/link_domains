@@ -1,10 +1,8 @@
 #!/bin/bash
 
 main() {
-    ensure_variable "$SUBDOMAINS" 'SUBDOMAINS'
-
     url=https://api.cloudflare.com/client/v4
-    sub_domains=("$SUBDOMAINS")
+    sub_domains="$([ -z "$SUBDOMAINS" ] && echo '@' || echo "$SUBDOMAINS")"
 
     zones_response=$(curl $url/zones)
     if [ -z "$zones_response" ]; then exit 1; fi
@@ -15,7 +13,14 @@ main() {
     records_response=$(curl $url/zones/${zone_id}/dns_records)
     if [ -z "$records_response" ]; then exit 1; fi
 
-    for type in A AAAA
+    if [ "$IPV4ONLY" = 1 ]; then
+        types="A"
+    elif [ "$IPV6ONLY" = 1 ]; then
+        types="AAAA"
+    else
+        types="A AAAA"
+    fi
+    for type in $types
     do
         if [ "$type" = 'A' ]; then
             ip=$(curl -4 icanhazip.com)
@@ -110,4 +115,40 @@ ensure_variable () {
     return 0
 }
 
-main ${@}
+get_options () {
+    while test $# != 0
+    do
+        case "$1" in
+        -4) echo "IPV4ONLY=1" ;;
+        -6) echo "IPV6ONLY=1" ;;
+        --) shift; break;;
+        *)  usage; exit 1 ;;
+        esac
+        shift
+    done
+}
+
+usage () {
+    cat <<'EOF'
+Usage: link_domains [OPTIONS...]
+
+Ensures A/AAAA DNS records on Cloudflare match this hosts IP addresses and creates/updates them otherwise.
+
+Options:
+    -4      IPv4 Only
+    -6      IPv6 Only
+
+Evironment Variables
+All  of the following are required:
+    CLOUDFLARE_API_KEY   API Token created on the Cloudflare dashboard
+    CLOUDFLARE_EMAIL     Email address used at Cloudflare
+Optionally:
+    SUBDOMAINS           Whitespace separated list of subdomains to forward, use '@' for root. (default: '@')
+EOF
+}
+
+set -a
+source <(get_options "${@}")
+set +a
+
+main
