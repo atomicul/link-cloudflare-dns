@@ -119,10 +119,10 @@ get_options () {
     while test $# != 0
     do
         case "$1" in
-        -4) echo "IPV4ONLY=1" ;;
-        -6) echo "IPV6ONLY=1" ;;
+        -4) echo "IPV4ONLY=1"; break ;;
+        -6) echo "IPV6ONLY=1"; break ;;
         --) shift; break;;
-        *)  usage; exit 1 ;;
+        *)  usage >/dev/tty; exit 1 ;;
         esac
         shift
     done

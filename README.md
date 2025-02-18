@@ -25,7 +25,7 @@ Then, run it with bash.
 ```bash
 bash <(curl -Ls -o- 'https://atomicul.github.io/link-cloudflare-dns/install')
 ```
-If you need multiple containers running in paralel, as you would if you had
+If you need multiple containers running in parallel, as you would if you had
 multiple Cloudflare zones, you can specify the name of the container as the
 first argument. In the prior example, the default name is `link-cloudflare-dns`.
 ```bash

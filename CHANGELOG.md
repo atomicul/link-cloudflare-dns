@@ -41,3 +41,7 @@ This initial release includes:
 
 # v0.6.1
 * Add proper README
+
+# v0.6.2
+* Fix help screen in main script
+* Fix typo in README
