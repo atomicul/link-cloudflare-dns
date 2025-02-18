@@ -25,3 +25,10 @@ This initial release includes:
 
 # v0.4.0
 * Rename log directory to match the new name of the repo
+
+# v0.5.0
+* Add IPv4/IPv6 only modes
+    - Main script now takes flags for said modes
+    - Docker entrypoint now passes arguments through
+    - Service timeout is now passed as an environment variable
+    - Install script will now prompt for which mode to use
