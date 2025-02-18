@@ -38,3 +38,6 @@ This initial release includes:
 
 # v0.6.0
 * Add container name argument to install script
+
+# v0.6.1
+* Add proper README
