@@ -45,3 +45,6 @@ This initial release includes:
 # v0.6.2
 * Fix help screen in main script
 * Fix typo in README
+
+# v0.7.0
+* Enable building arm images
