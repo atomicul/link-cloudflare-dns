@@ -35,3 +35,6 @@ This initial release includes:
 
 # v0.5.1
 * Fix error generating config in new install script
+
+# v0.6.0
+* Add container name argument to install script

@@ -2,7 +2,7 @@
 
 GITHUB_PAGES_ROOT='https://atomicul.github.io/link-cloudflare-dns'
 DOCKER_IMAGE='ghcr.io/atomicul/link-cloudflare-dns:latest'
-CONTAINER_NAME='link-cloudflare-dns'
+DEFAULT_CONTAINER_NAME='link-cloudflare-dns'
 
 main () {
     clear
@@ -45,10 +45,16 @@ EOF
     read -r
     echo
 
+    if [ $# -eq 0 ]; then
+        container_name="$DEFAULT_CONTAINER_NAME"
+    else
+        container_name="$1"
+    fi
+
     if docker container ls --all --format '{{ .Names }}' \
-        | grep -P "\s*${CONTAINER_NAME}\s*"
+        | grep -P "\s*${container_name}\s*"
     then
-        if ! yes_or_no "There is already an exsting container named $CONTAINER_NAME. Overwrite?"
+        if ! yes_or_no "There is already an exsting container named $container_name. Overwrite?"
         then
             echo "Aborting..."
             return 0
@@ -56,8 +62,8 @@ EOF
 
         echo "Stopping and removing container. This might take a little while..."
 
-        docker container stop "$CONTAINER_NAME"
-        docker container remove "$CONTAINER_NAME"
+        docker container stop "$container_name"
+        docker container remove "$container_name"
     fi
 
     set -a
@@ -72,7 +78,7 @@ EOF
 
     if [ "$SERVICE" = 0 ]; then
         docker run \
-            --name link-cloudflare-dns \
+            --name "$container_name" \
             --rm \
             --attach STDOUT \
             --attach STDERR \
@@ -83,7 +89,7 @@ EOF
             "$DOCKER_IMAGE" one-time $flags
     else
         docker run \
-            --name link-cloudflare-dns \
+            --name "$container_name" \
             --detach \
             --restart=unless-stopped \
             --network=host \
