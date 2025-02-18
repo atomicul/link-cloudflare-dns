@@ -34,7 +34,7 @@ subdomain.example.com a.b.example.com.' >/dev/tty
     clear >/dev/tty
     echo -e "Choose $(color_sequence 'IP address version')" >/dev/tty
     echo >/dev/tty
-    printf 'MODE=%s' "$(pick_variant 'IPv4 & IPv6' 'IPv4 Only' 'IPv6 Only')"
+    printf 'MODE=%s\n' "$(pick_variant 'IPv4 & IPv6' 'IPv4 Only' 'IPv6 Only')"
 
     clear >/dev/tty
     echo -e "Choose $(color_sequence 'how to run') the job" >/dev/tty

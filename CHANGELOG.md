@@ -32,3 +32,6 @@ This initial release includes:
     - Docker entrypoint now passes arguments through
     - Service timeout is now passed as an environment variable
     - Install script will now prompt for which mode to use
+
+# v0.5.1
+* Fix error generating config in new install script
