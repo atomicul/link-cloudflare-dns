@@ -32,6 +32,11 @@ subdomain.example.com a.b.example.com.' >/dev/tty
     printf 'SUBDOMAINS="%s"\n' "$(MANY=1 DEFAULT='@' read_word 'subdomains')"
 
     clear >/dev/tty
+    echo -e "Choose $(color_sequence 'IP address version')" >/dev/tty
+    echo >/dev/tty
+    printf 'MODE=%s' "$(pick_variant 'IPv4 & IPv6' 'IPv4 Only' 'IPv6 Only')"
+
+    clear >/dev/tty
     echo -e "Choose $(color_sequence 'how to run') the job" >/dev/tty
     echo >/dev/tty
     as_service="$(pick_variant 'Run once' 'Run as a service (on a timer)')"
