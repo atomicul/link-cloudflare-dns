@@ -5,5 +5,7 @@ services:
     environment:
       CLOUDFLARE_API_KEY: "${CLOUDFLARE_API_KEY}"
       CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}"
-      SUBDOMAINS: "${SUBDOMAINS}"
+      # SUBDOMAINS: "${SUBDOMAINS}"
     command: ['one-time']
+    # command: ['one-time', '-4'] # Use this for IPv4 Only
+    # command: ['one-time', '-6'] # Use this for IPv6 Only

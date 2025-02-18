@@ -10,24 +10,31 @@ main () {
 
     if [ "$1" == 'one-time' ]
     then
-        run_one_time
+        shift
+        run_one_time "$@"
     fi
 
     if [ "$1" == 'service' ]
     then
-        run_as_service "$2"
+        shift
+        run_as_service "$@"
     fi
 
     print_usage
 }
 
 run_as_service () {
-    loop "$1" link_domains 1>>/var/log/link-cloudflare-dns/access.log 2>>/var/log/link-cloudflare-dns/error.log
+    if [ -z "$LOOP_TIME" ]; then
+        loop_time=60s
+    else
+        loop_time="$LOOP_TIME"
+    fi
+    loop "$loop_time" link_domains "${@}" 1>>/var/log/link-cloudflare-dns/access.log 2>>/var/log/link-cloudflare-dns/error.log
     exit $?
 }
 
 run_one_time () {
-    link_domains
+    link_domains "$@"
     exit $?
 }
 

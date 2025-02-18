@@ -6,7 +6,10 @@ services:
     environment:
       CLOUDFLARE_API_KEY: "${CLOUDFLARE_API_KEY}"
       CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}"
-      SUBDOMAINS: "${SUBDOMAINS}"
-    volumes:
-      - "${LOGS_DIRECTORY}:/var/log/link-cloudflare-dns"
-    command: ['service', '${LOOP_TIME}']
+      # SUBDOMAINS: "@"
+      # LOOP_TIME: 60s
+    # volumes:
+    #   - "/var/log/link-cloudflare-dns:/var/log/link-cloudflare-dns"
+    command: ['service']
+    # command: ['service', '-4'] # Use this for IPv4 Only
+    # command: ['service', '-6'] # Use this for IPv6 Only

@@ -64,6 +64,12 @@ EOF
     source <(run_script 'generate-env')
     set +a
 
+    if [ "$MODE" = 1 ]; then
+        flags="-4"
+    elif [ "$MODE" = 2 ]; then
+        flags="-6"
+    fi
+
     if [ "$SERVICE" = 0 ]; then
         docker run \
             --name link-cloudflare-dns \
@@ -74,7 +80,7 @@ EOF
             -e CLOUDFLARE_API_KEY \
             -e CLOUDFLARE_EMAIL \
             -e SUBDOMAINS \
-            "$DOCKER_IMAGE" one-time
+            "$DOCKER_IMAGE" one-time $flags
     else
         docker run \
             --name link-cloudflare-dns \
@@ -84,8 +90,9 @@ EOF
             -e CLOUDFLARE_API_KEY \
             -e CLOUDFLARE_EMAIL \
             -e SUBDOMAINS \
+            -e LOOP_TIME \
             -v "${LOGS_DIRECTORY}:/var/log/link-cloudflare-dns" \
-            "$DOCKER_IMAGE" service "$LOOP_TIME"
+            "$DOCKER_IMAGE" service $flags
     fi
 
 
