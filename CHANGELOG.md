@@ -56,3 +56,6 @@ This initial release includes:
 
 # v1.0.1
 * Add extra feature bullet point in README
+
+# v1.0.2
+* Add MIT license
