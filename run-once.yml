@@ -3,9 +3,9 @@ services:
     build: .
     network_mode: host
     environment:
-      CLOUDFLARE_API_KEY: "${CLOUDFLARE_API_KEY}"
-      CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}"
-      # SUBDOMAINS: "${SUBDOMAINS}"
+      CLOUDFLARE_API_KEY: "${CLOUDFLARE_API_KEY}" # API Token with DNS:Edit for only one zone
+      CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}" # Your Cloudflare account's email address
+      # SUBDOMAINS: "@" # Whitespace separated list of subdomains. '@' for root.
     command: ['one-time']
     # command: ['one-time', '-4'] # Use this for IPv4 Only
     # command: ['one-time', '-6'] # Use this for IPv6 Only

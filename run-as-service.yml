@@ -4,12 +4,12 @@ services:
     network_mode: host
     restart: always
     environment:
-      CLOUDFLARE_API_KEY: "${CLOUDFLARE_API_KEY}"
-      CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}"
-      # SUBDOMAINS: "@"
-      # LOOP_TIME: 60s
+      CLOUDFLARE_API_KEY: "${CLOUDFLARE_API_KEY}" # API Token with DNS:Edit for only one zone
+      CLOUDFLARE_EMAIL: "${CLOUDFLARE_EMAIL}" # Your Cloudflare account's email address
+      # SUBDOMAINS: "@" # Whitespace separated list of subdomains. '@' for root.
+      # LOOP_TIME: 60s # Set the job's periodicity
     # volumes:
-    #   - "/var/log/link-cloudflare-dns:/var/log/link-cloudflare-dns"
+    #   - "/var/log/link-cloudflare-dns:/var/log/link-cloudflare-dns" # Mount logs directory
     command: ['service']
     # command: ['service', '-4'] # Use this for IPv4 Only
     # command: ['service', '-6'] # Use this for IPv6 Only

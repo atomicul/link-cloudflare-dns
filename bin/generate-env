@@ -11,8 +11,8 @@ main() {
     echo -e "Input your $(color_sequence 'Cloudflare API Token')" >/dev/tty
     echo >/dev/tty
     fmt -w "$(tput cols)" <<<\
-'Make sure it has read/write DNS permission for the domain
-you want to manage and only that domain. In the case it has 
+'Make sure it has DNS:Edit permission for the zone
+you want to manage and only that zone. In the case it has 
 permission to access multiple, it will use one at random.' >/dev/tty
     echo >/dev/tty
     echo -e "You can make the token here: $(color_url https://dash.cloudflare.com/profile/api-tokens)" >/dev/tty

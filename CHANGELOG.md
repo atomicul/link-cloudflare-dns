@@ -48,3 +48,8 @@ This initial release includes:
 
 # v0.7.0
 * Enable building arm images
+
+# v1.0.0
+* Document compose examples
+* Reword sentence README
+* Reword install script prompt

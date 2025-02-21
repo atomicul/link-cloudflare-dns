@@ -45,7 +45,7 @@ compose files: `run-as-service.yml`, `run-once.yml`.
 
 ## Use without Docker
 The main script used is `bin/link-domains`, it requires [yq](https://github.com/mikefarah/yq),
-and you can find usage help by doing:
+and you can find usage help by running:
 ```bash
 bin/link-domains --help
 ```
