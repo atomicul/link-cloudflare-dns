@@ -53,3 +53,6 @@ This initial release includes:
 * Document compose examples
 * Reword sentence README
 * Reword install script prompt
+
+# v1.0.1
+* Add extra feature bullet point in README

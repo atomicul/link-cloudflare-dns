@@ -3,6 +3,7 @@
 Dynamic DNS Docker service to keep your domain name in sync with your IP address
 * 🛠️ Reliable and Cross-Platform; Runs in a containerized environment
 * 🔗 Supports both IPv4 and IPv6
+* 📜 Comprehensive Logs
 * 🥱 Easy install; Features an interactive script for a guided configuration
 
 ## Dependencies
