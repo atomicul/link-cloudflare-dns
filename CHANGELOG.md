@@ -59,3 +59,6 @@ This initial release includes:
 
 # v1.0.2
 * Add MIT license
+
+# v1.0.3
+* Fix misleading prompt in the install script

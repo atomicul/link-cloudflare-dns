@@ -41,7 +41,7 @@ EOF
     printf '\n\n'
     echo -e '\e[1mDynamic DNS Docker service to keep your domain name in sync with your IP address\e[0m'
     echo
-    printf 'Press any key to proceed to installation...'
+    printf 'Press the return key to proceed to installation...'
     read -r
     echo
 
