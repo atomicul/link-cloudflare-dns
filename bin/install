@@ -52,7 +52,7 @@ EOF
     fi
 
     if docker container ls --all --format '{{ .Names }}' \
-        | grep -P "\s*${container_name}\s*"
+        | grep -qP "^${container_name}$"
     then
         if ! yes_or_no "There is already an exsting container named $container_name. Overwrite?"
         then
