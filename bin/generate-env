@@ -2,12 +2,6 @@
 
 main() {
     clear >/dev/tty
-    echo -e "Input your $(color_sequence 'Cloudflare email address')" >/dev/tty
-    echo -e "You can find it here: $(color_url https://dash.cloudflare.com/profile)" >/dev/tty
-    echo >/dev/tty
-    printf 'CLOUDFLARE_EMAIL=%s\n' "$(read_word 'Email')"
-
-    clear >/dev/tty
     echo -e "Input your $(color_sequence 'Cloudflare API Token')" >/dev/tty
     echo >/dev/tty
     fmt -w "$(tput cols)" <<<\
