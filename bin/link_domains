@@ -87,8 +87,7 @@ log () {
 }
 
 curl () {
-    ensure_variable "$CLOUDFLARE_EMAIL" 'CLOUDFLARE_EMAIL'
-    ensure_variable "$CLOUDFLARE_API_KEY" 'CLOUDFLARE_API_KEY'
+    ensure_variable 'CLOUDFLARE_API_KEY'
 
     output_file='/tmp/curl-output'
 
@@ -96,7 +95,6 @@ curl () {
         $(which curl) -s \
             -w '%{http_code}' \
             -o "$output_file" \
-            -H "X-Auth-Email: $CLOUDFLARE_EMAIL" \
             -H "Authorization: Bearer $CLOUDFLARE_API_KEY" \
             "$@"
         )
@@ -107,9 +105,9 @@ curl () {
 }
 
 ensure_variable () {
-    if [ -z "$1" ]
+    if [ -z "${!1}" ]
     then
-        >&2 printf 'Missing required environment variable: %s\n' "$2"
+        >&2 printf 'Missing required environment variable: %s\n' "$1"
         exit 1
     fi
     return 0
@@ -141,7 +139,6 @@ Options:
 Evironment Variables
 All  of the following are required:
     CLOUDFLARE_API_KEY   API Token created on the Cloudflare dashboard
-    CLOUDFLARE_EMAIL     Email address used at Cloudflare
 Optionally:
     SUBDOMAINS           Whitespace separated list of subdomains to forward, use '@' for root. (default: '@')
 EOF
