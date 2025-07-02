@@ -66,3 +66,6 @@ This initial release includes:
 # v1.0.4
 * Fix requiring of the account email variable as it is simply not needed
 * Fix regex errors causing false positives on duplicate Docker container name check
+
+# v1.0.5
+* Update README
